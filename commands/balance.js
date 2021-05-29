@@ -33,5 +33,6 @@ module.exports.run = async (bot, message, arguments, folder, db) => {
 
 module.exports.help = {
     name: "balance",
-    aliasses: ["bl", "bal"]
+    aliasses: ["bl", "bal"],
+    description: "Check your nacho count!"
 }

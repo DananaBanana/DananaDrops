@@ -8,5 +8,6 @@ module.exports.run = async (bot, message, arguments, folder, messageArray, disco
 }
 
 module.exports.help = {
-    name: "ping"
+    name: "ping",
+    description: "How slow is the bot?"
 }

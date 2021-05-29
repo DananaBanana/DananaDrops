@@ -23,5 +23,6 @@ module.exports.run = async (bot, message, arguments, folder) => {
 }   
 
 module.exports.help = {
-    name: "shut"
+    name: "shut",
+    description: "Mute someone while humiliating them as well."
 }

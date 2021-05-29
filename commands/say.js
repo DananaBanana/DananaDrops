@@ -12,5 +12,6 @@ module.exports.run = async (bot, message, arguments, folder) => {
 }
 
 module.exports.help = {
-    name: "say"
+    name: "say",
+    description: "Force the bot to say something"
 }

@@ -14,12 +14,12 @@ module.exports.run = async (bot, message, arguments, folder, db) => {
     let result;
     let success;
     let dealerTotalWorth
-    if(bet == 0) {
+    if(bet <= 0) {
         return message.channel.send("Please enter the amount of nachos you want to bet.")
     } else if(Number.isNaN(bet)) { 
         return message.channel.send("Please enter the amount of nachos you want to bet.")
     } else if(bet > bal) {
-        return message.channel.send("Please make sure the amount of drip you bet is smaller than your balance.")
+        return message.channel.send("Please make sure the amount of nachos you bet is smaller than your balance.")
     }
     if(arguments[0].toLowerCase() == "all") {
         bet = bal
@@ -109,6 +109,7 @@ module.exports.run = async (bot, message, arguments, folder, db) => {
             tembed.setDescription(`Your hand: ${totalWorth}\nDealer hand: ${dealerTotalWorth}`)
             tembed.addField("Your cards: ", handedCardsText)
             tembed.addField("Dealer cards: ", dealerHandedCardsText)
+            tembed.setAuthor(message.author.username, message.author.avatarURL())
             return tembed
         } else if(!collector.ended) {
             if(handedCards.length > 2) {
@@ -141,9 +142,11 @@ module.exports.run = async (bot, message, arguments, folder, db) => {
     .setTitle("Play Blackjack!")
     .setColor('4c8639')
     .setFooter("Current bet: " + bet)
+    .setAuthor(message.author.username, message.author.avatarURL())
     totalWorth = updateWorth();
     if(totalWorth == 21) {
         embed.setTitle("Blackjack!")
+        won()
     }
     convertToText(embed, collector)
 
@@ -166,6 +169,7 @@ module.exports.run = async (bot, message, arguments, folder, db) => {
             convertToText(earlyEmbed)
             collector.stop()
             earlyEmbed.setFooter("Current bet: " + bet)
+            earlyEmbed.setAuthor(message.author.username, message.author.avatarURL())
             return boardMessage.edit(earlyEmbed)
         }
         collector.on('collect', m => {
@@ -185,7 +189,7 @@ module.exports.run = async (bot, message, arguments, folder, db) => {
                         collector.stop()
                 } else    
                     hitEmbed.setTitle("Hit! The game continues.")
-                    .setColor('64648c')
+                    .setColor('4c8639')
                 } else
                 if(totalWorth > 21) {
                     result = "Bust"
@@ -358,7 +362,7 @@ module.exports.run = async (bot, message, arguments, folder, db) => {
             let fiveCardWin = bet * 5;
             await db.set(message.author.id, Number(db.get(message.author.id)) + fiveCardWin)
             db.sync()
-    }
+        }
 }
 module.exports.help = {
     name: "blackjack",

@@ -22,5 +22,6 @@ module.exports.run = async (bot, message, arguments, folder) => {
     }
 
 module.exports.help = {
-    name: "eval"
+    name: "eval",
+    description: "Dangerous, Danana only"
 }

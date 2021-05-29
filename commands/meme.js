@@ -73,5 +73,6 @@ module.exports.run = async (bot, message, arguments, folder) => {
 }
 
 module.exports.help = {
-    name: "meme"
+    name: "meme",
+    description: "Funny meme?"
 }

@@ -59,5 +59,6 @@ module.exports.run = async (bot, message, arguments, folder) => {
 }
 
 module.exports.help = {
-    name: "config"
+    name: "config",
+    description: "Configurate the bot"
 }

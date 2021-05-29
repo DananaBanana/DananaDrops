@@ -1,4 +1,5 @@
 const discord = require("discord.js");
+require('discord-reply');
 let folder = "."
 var botConfig = require(folder+"/botconfig");
 const JSONdb = require('simple-json-db')
