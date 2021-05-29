@@ -9,7 +9,7 @@ module.exports.run = async (bot, message, arguments, folder, db) => {
     let result;
     let success;
     let dealerTotalWorth
-    if(bet == 0) {
+    if(bet <= 0) {
         return message.channel.send("Please enter the amount of nachos you want to bet.")
     } else if(Number.isNaN(bet)) { 
         return message.channel.send("Please enter the amount of nachos you want to bet.")
