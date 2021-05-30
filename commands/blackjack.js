@@ -1,3 +1,5 @@
+//the shitties blackjack command ever, but it works I guess
+
 const discord = require("discord.js");
 const fs = require("fs");
 
