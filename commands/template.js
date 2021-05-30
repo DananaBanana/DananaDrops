@@ -1,7 +1,7 @@
 const discord = require("discord.js");
 const fs = require("fs");
 
-module.exports.run = async (bot, message, arguments, folder, db) => {
+module.exports.run = async (bot, message, arguments, db) => {
 
     //Your code goes here!
     await db.set(message.author.id, Number(db.get(message.author.id)) + 69) // Add nachos

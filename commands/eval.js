@@ -1,6 +1,6 @@
 const discord = require("discord.js");
 
-module.exports.run = async (bot, message, arguments, folder) => {
+module.exports.run = async (bot, message, arguments) => {
 
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));

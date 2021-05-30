@@ -1,10 +1,11 @@
 const discord = require("discord.js");
 const fs = require(`fs`)
+var path = require('path');
 
-module.exports.run = async (bot, message, arguments, folder) => {
+module.exports.run = async (bot, message, arguments) => {
 
-    var keyJson = JSON.parse(fs.readFileSync(`${folder}/keys.json`).toString());
-
+    let keysPath = path.join(__dirname, '..', 'keys.json')
+    var keyJson = JSON.parse(fs.readFileSync(keysPath).toString());
     if(message.author.id !== "423478609529929728" && message.author.id !== "222694725487034369") return message.reply("You are not permitted to use this command.")
 
     if(!arguments) return message.reply(`Please give me a code to put into the system`)
@@ -15,11 +16,10 @@ module.exports.run = async (bot, message, arguments, folder) => {
     var key = arguments[0];
     var keyArray = keyJson.keyArray
     if(!key) return message.reply("There is no key for me to add.")
-    console.log(String(key).length, key)
 
     keyArray = keyArray.push(key);
 
-    fs.writeFileSync(`${folder}/keys.json`, JSON.stringify(keyJson));
+    fs.writeFileSync(keysPath, JSON.stringify(keyJson));
 
     message.reply("Succesfully added the key: " + key)
 }

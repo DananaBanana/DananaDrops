@@ -1,9 +1,11 @@
 const discord = require("discord.js");
 const fs = require('fs')
 
-module.exports.run = async (bot, message, arguments, folder) => {
+var path = require('path');
 
-    let botConfigPath = `${folder}/botconfig.json`
+module.exports.run = async (bot, message, arguments) => {
+
+    let botConfigPath = path.join(__dirnamen, "..", "botconfig.json")
 
     var botConfig =  JSON.parse(fs.readFileSync(botConfigPath).toString());
 

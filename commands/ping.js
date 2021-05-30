@@ -1,6 +1,6 @@
 const discord = require("discord.js");
 
-module.exports.run = async (bot, message, arguments, folder, messageArray, discord, cooldown) => {
+module.exports.run = async (bot, message, arguments, db) => {
 
     message.channel.send(`🏓Latency is ${Date.now() - message.createdTimestamp}ms. API Latency is ${Math.round(bot.ws.ping)}ms`);
 

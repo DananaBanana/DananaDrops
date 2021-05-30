@@ -1,10 +1,11 @@
 const discord = require("discord.js");
-var botConfig = require("../botConfig.json");
+var path = require('path');
+var botConfig = require(path.join(__dirname, "..", "botconfig.json"));
 const fs = require("fs")
 
 module.exports.run = async (bot, message, arguments) => {
 
-    fs.readdir("./commands/" , (err, files) => {
+    fs.readdir(path.join(__dirname) , (err, files) => {
 
         if(err) console.log(err);
     

@@ -1,6 +1,6 @@
 const discord = require("discord.js");
 
-module.exports.run = async (bot, message, arguments, folder) => {
+module.exports.run = async (bot, message, arguments) => {
 
     async function fetchMore(channel, limit = 250) {
         if (!channel) {

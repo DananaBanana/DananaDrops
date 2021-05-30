@@ -1,6 +1,6 @@
 const discord = require("discord.js");
 
-module.exports.run = async (bot, message, arguments, folder) => {
+module.exports.run = async (bot, message, arguments) => {
 
     if(message.author.id !== "423478609529929728") return message.reply("only danana can do this command lmao")
 

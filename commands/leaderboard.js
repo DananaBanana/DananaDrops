@@ -1,7 +1,7 @@
 const discord = require("discord.js");
 const fs = require("fs")
 
-module.exports.run = async (bot, message, arguments, folder, db) => {
+module.exports.run = async (bot, message, arguments, db) => {
 
     let objects = await db.JSON();
 

@@ -1,6 +1,6 @@
 const discord = require("discord.js");
 
-module.exports.run = async (bot, message, arguments, folder, db) => {
+module.exports.run = async (bot, message, arguments, db) => {
 
     function getUserFromMention(mention) {
         if (!mention) return;

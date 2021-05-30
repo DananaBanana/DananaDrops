@@ -1,12 +1,12 @@
 const discord = require("discord.js");
 require('discord-reply');
-let folder = "."
-var botConfig = require(folder+"/botconfig");
+var path = require('path');
+var botConfig = require(path.join(__dirname, "botconfig"));
 const JSONdb = require('simple-json-db')
 
 var messageCounter = 0;
 
-const db = new JSONdb(`${folder}/nachos.json`);
+const db = new JSONdb(path.join(__dirname, "nachos.json"));
 
 const bot = new discord.Client();
 
@@ -17,7 +17,7 @@ var talkedSet = new Set();
 var nachosSet = new Set();
 var cooldown = false;
 
-fs.readdir(folder + "/commands/", (err, files) => {
+fs.readdir(path.join(__dirname, "commands"), (err, files) => {
 
     if(err) console.log(err);
 
@@ -30,7 +30,7 @@ fs.readdir(folder + "/commands/", (err, files) => {
 
     jsFiles.forEach((f,i) => {
 
-        var fileGet = require(`${folder}/commands/${f}`);
+        var fileGet = require(path.join(__dirname, "commands", f));
         console.log(`The file ${f} has been loaded!`)
 
         bot.commands.set(fileGet.help.name, fileGet);
@@ -48,12 +48,17 @@ bot.on("ready", async () => {
     console.log(`${bot.user.username} is online.`)
 
 
-    bot.user.setActivity("with some drops I guess", { type: "PLAYING" });
+    bot.user.setActivity("with some nachos I guess", { type: "PLAYING" });
 
     setInterval(() => {
         messageCounter = 0;
         talkedSet.clear();
     }, 10 * 1000);
+
+    //SANDY CHEEKS INFLATION VORE
+
+
+
 })
 
 bot.on("message", async message => {
@@ -72,7 +77,7 @@ bot.on("message", async message => {
     var arguments = messageArray.slice(1);
     var commands = bot.commands.get(command.slice(prefix.length)) || bot.aliasses.get(command.slice(prefix.length));
 
-    if(commands) return commands.run(bot, message, arguments, folder, db);
+    if(commands) return commands.run(bot, message, arguments, db);
     }
 
     if(message.channel.id == "701366325565456435") { // Check if channel is #testing (will later be #general)
@@ -82,13 +87,13 @@ bot.on("message", async message => {
             if(messageCounter == Number(botConfig.minimumSpeakers) && cooldown == false) { // checks if enough people are talking and the cooldown is off
                 randomNumb = Math.random() * botConfig.dropPercentage;
                 if(randomNumb < Number(botConfig.dropPercentage)) { // 
-                    var jsonFile =  JSON.parse(fs.readFileSync(folder + '/keys.json').toString());
+                    var jsonFile =  JSON.parse(fs.readFileSync(__dirname + "\keys.json").toString());
                     var keyArray = jsonFile.keyArray
                     if (keyArray.length === 0) return bot.channels.cache.get("820726443607588905").send("Array empty, please restock keys!"); // When there are no keys left, notify me and 3oF
                     var key = keyArray[0];
                     keyArray.shift(); // delete the used key
                     jsonFile.keyArray = keyArray // update the file so the key is deleted
-                    fs.writeFileSync(folder  +'/keys.json', JSON.stringify(jsonFile));
+                    fs.writeFileSync(__dirname + "\keys.json", JSON.stringify(jsonFile));
                     let items = Array.from(talkedSet);
                     var randomUser = items[Math.floor(Math.random() * items.length)]; 
                     randomUser = message.guild.members.cache.get(randomUser) // select a random user
@@ -122,3 +127,5 @@ bot.on("message", async message => {
 bot.on('error', console.error);
 
 bot.login(botConfig.token)
+
+const disbut = require('discord-buttons')(bot);
