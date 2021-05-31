@@ -1,6 +1,6 @@
 const discord = require("discord.js");
 
-module.exports.inflation = async function(db) {
+module.exports.inflation = async function(db, percentage) {
 
     let json = await db.JSON();
     
@@ -11,7 +11,6 @@ module.exports.inflation = async function(db) {
         totalCirculation += nachos;
     }
 
-    let percentage = 10;
     let keyCost = Math.round(totalCirculation/100*percentage)
 
     return { totalCirculation: totalCirculation, keyCost: keyCost }

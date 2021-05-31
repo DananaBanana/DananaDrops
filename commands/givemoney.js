@@ -33,7 +33,7 @@ module.exports.run = async (bot, message, arguments, db) => {
 
 }
 module.exports.help = {
-    name: "pay",
-    aliasses: ["givemoney", "paypal", "pp"],
+    name: "givemoney",
+    aliasses: ["pay", "paypal", "pp"],
     description: "Paypal but for Nachos"
 }

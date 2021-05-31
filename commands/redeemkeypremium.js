@@ -6,7 +6,7 @@ const fs = require("fs")
 module.exports.run = async (bot, message, arguments, db) => {
 
     let mainDir = path.join(__dirname, '..')
-    let result = await require(mainDir + "/lib.js").inflation(db, 10)
+    let result = await require(mainDir + "/lib.js").inflation(db, 30)
     let keyCost = result.keyCost
     let totalCirculation = result.totalCirculation
 
@@ -20,7 +20,7 @@ module.exports.run = async (bot, message, arguments, db) => {
         .setLabel("Cancel")
         .setID('cancel_redeem')
 
-    message.channel.send("There are currently " + totalCirculation + " nachos, you need 10% of the circulating supply to buy a steam key, so a key would cost you " + keyCost + " nachos!\nAre you sure you want to continue?", {buttons: [yesButton, cancelButton]})
+    message.channel.send("There are currently " + totalCirculation + " nachos, you need 30% of the circulating supply to buy a premium steam key, so a key would cost you " + keyCost + " nachos!\nAre you sure you want to continue?", {buttons: [yesButton, cancelButton]})
 
     let disabled = false;
 
@@ -31,14 +31,14 @@ module.exports.run = async (bot, message, arguments, db) => {
             if(button.clicker.user.id !== message.author.id) return;
             if(keyCost > db.get(message.author.id)) return button.reply.send("You do not have enough nachos.")
                 var jsonFile =  JSON.parse(fs.readFileSync(path.join(__dirname, "..", "keys.json")).toString());
-                    var keyArray = jsonFile.keyArray
-                    if (keyArray.length === 0) return button.reply.send("There were no keys left, you still have the same amount of nachos.") // When there are no keys left, notify me and 3oF
+                    var keyArray = jsonFile.premiumKeyArray;
+                    if (keyArray.length === 0) return button.reply.send("There were no premium keys left, you still have the same amount of nachos.") // When there are no keys left, notify me and 3oF
                     var key = keyArray[0];
                     keyArray.shift(); // delete the used key
-                    jsonFile.keyArray = keyArray // update the file so the key is deleted
+                    jsonFile.premiumKeyArray = keyArray // update the file so the key is deleted
                     fs.writeFileSync(path.join(__dirname, "..", "keys.json"), JSON.stringify(jsonFile));
             await db.set(message.author.id, db.get(message.author.id) - keyCost)
-            button.message.channel.send(message.author.tag + " clicked yes, and I sent them the steam key via an invisible message!")
+            button.message.channel.send(message.author.tag + " clicked yes, and I sent them the premium steam key via an invisible message!")
             button.reply.send(`Here is your key!` + `\n\`${key}\``, true);
         }
         if(button.id === 'cancel_redeem') {
@@ -51,6 +51,6 @@ module.exports.run = async (bot, message, arguments, db) => {
     }
 
 module.exports.help = {
-    name: "redeemkey",
-    description: "Convert nachos to steam keys."
+    name: "redeemkeypremium",
+    description: "Convert nachos to premium steam keys."
 }

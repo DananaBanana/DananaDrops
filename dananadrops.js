@@ -55,10 +55,6 @@ bot.on("ready", async () => {
         talkedSet.clear();
     }, 10 * 1000);
 
-    //SANDY CHEEKS INFLATION VORE
-
-
-
 })
 
 bot.on("message", async message => {
