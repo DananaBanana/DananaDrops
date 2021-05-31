@@ -174,5 +174,5 @@ module.exports.run = async (bot, message, arguments, db) => {
 module.exports.help = {
     name: "slots",
     aliasses: ["roll"],
-    description: "Roll the slots!"
+    description: "Roll the slots!\n\nPossible winnings: \n**2x 💎: 2x\n2x 💵: 2x\n2x 💰: 3x\n3x 🥇: 3x\n3x: :gem:: 3x\n3x  :100: 4x\n3x  :dollar:: 7x\n3x: :moneybag:: 10x**"
 }
