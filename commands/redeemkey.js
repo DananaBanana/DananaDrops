@@ -36,10 +36,16 @@ module.exports.run = async (bot, message, arguments, db) => {
                     var key = keyArray[0];
                     keyArray.shift(); // delete the used key
                     jsonFile.keyArray = keyArray // update the file so the key is deleted
-                    fs.writeFileSync(path.join(__dirname, "..", "keys.json"), JSON.stringify(jsonFile));
             await db.set(message.author.id, db.get(message.author.id) - keyCost)
-            button.message.channel.send(message.author.tag + " clicked yes, and I sent them the steam key via an invisible message!")
-            button.reply.send(`Here is your key!` + `\n\`${key}\``, true);
+            button.reply.send(message.author.tag + " clicked yes, and I sent them the steam key via a DM!")
+            try {message.author.send(`Here is your key!` + `\n\`${key}\``, true);}
+            catch {
+            button.reply.edit("Hmm I couldn't send them a message, I added the key back to the database and added their money back!"); 
+            await db.set(message.author.id, db.get(message.author.id) + keyCost)
+            keyArray.push(key)
+            jsonFile.keyArray = keyArray;
+        }
+        fs.writeFileSync(path.join(__dirname, "..", "keys.json"), JSON.stringify(jsonFile));
         }
         if(button.id === 'cancel_redeem') {
             if(button.clicker.user.id !== message.author.id) return;

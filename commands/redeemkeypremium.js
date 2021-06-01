@@ -35,11 +35,17 @@ module.exports.run = async (bot, message, arguments, db) => {
                     if (keyArray.length === 0) return button.reply.send("There were no premium keys left, you still have the same amount of nachos.") // When there are no keys left, notify me and 3oF
                     var key = keyArray[0];
                     keyArray.shift(); // delete the used key
-                    jsonFile.premiumKeyArray = keyArray // update the file so the key is deleted
-                    fs.writeFileSync(path.join(__dirname, "..", "keys.json"), JSON.stringify(jsonFile));
-            await db.set(message.author.id, db.get(message.author.id) - keyCost)
-            button.message.channel.send(message.author.tag + " clicked yes, and I sent them the premium steam key via an invisible message!")
-            button.reply.send(`Here is your key!` + `\n\`${key}\``, true);
+                    jsonFile.keyArray = keyArray // update the file so the key is deleted
+                    await db.set(message.author.id, db.get(message.author.id) - keyCost)
+                    button.reply.send(message.author.tag + " clicked yes, and I sent them the premium steam key via a DM!")
+                    try {message.author.send(`Here is your key!` + `\n\`${key}\``, true);}
+                    catch {
+                    button.reply.edit("Hmm I couldn't send them a message, I added the key back to the premium database and added their money back!"); 
+                    await db.set(message.author.id, db.get(message.author.id) + keyCost)
+                    keyArray.push(key)
+                    jsonFile.premiumKeyArray = keyArray;
+                }
+                fs.writeFileSync(path.join(__dirname, "..", "keys.json"), JSON.stringify(jsonFile));
         }
         if(button.id === 'cancel_redeem') {
             if(button.clicker.user.id !== message.author.id) return;
