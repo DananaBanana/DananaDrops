@@ -26,5 +26,6 @@ module.exports.run = async (bot, message, arguments) => {
 
 module.exports.help = {
     name: "addkey",
-    description: "Add Keys to the database!"
+    description: "Add Keys to the database!",
+    aliasses: ["ak"]
 }

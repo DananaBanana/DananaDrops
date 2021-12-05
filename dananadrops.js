@@ -14,7 +14,6 @@ const fs = require("fs")
 bot.commands = new discord.Collection();
 bot.aliasses = new discord.Collection();
 var talkedSet = new Set();
-var nachosSet = new Set();
 var cooldown = false;
 
 fs.readdir(path.join(__dirname, "commands"), (err, files) => {
@@ -81,20 +80,19 @@ bot.on("message", async message => {
             messageCounter++
             talkedSet.add(message.author.id)  // make the bot know they talked
             if(messageCounter == Number(botConfig.minimumSpeakers) && cooldown == false) { // checks if enough people are talking and the cooldown is off
-                randomNumb = Math.random() * botConfig.dropPercentage;
-                if(randomNumb < Number(botConfig.dropPercentage)) { // 
-                    var jsonFile =  JSON.parse(fs.readFileSync(__dirname + "\keys.json").toString());
+                randomNumb = Math.random() * botConfig.dropChance;
+                if(randomNumb < Number(botConfig.dropChance)) { // 
+                    var jsonFile =  JSON.parse(fs.readFileSync(__dirname + "/keys.json").toString());
                     var keyArray = jsonFile.keyArray
                     if (keyArray.length === 0) return bot.channels.cache.get("820726443607588905").send("Array empty, please restock keys!"); // When there are no keys left, notify me and 3oF
                     var key = keyArray[0];
                     keyArray.shift(); // delete the used key
                     jsonFile.keyArray = keyArray // update the file so the key is deleted
-                    fs.writeFileSync(__dirname + "\keys.json", JSON.stringify(jsonFile));
+                    fs.writeFileSync(__dirname + "/keys.json", JSON.stringify(jsonFile));
                     let items = Array.from(talkedSet);
                     var randomUser = items[Math.floor(Math.random() * items.length)]; 
                     randomUser = message.guild.members.cache.get(randomUser) // select a random user
-                    let i = 0;
-                    if(randomUser.id == "222694725487034369" || randomUser.id == "423478609529929728") return;
+                    if(randomUser.id == "222694725487034369" || randomUser.id == "423478609529929728" || randomUser.id == "319116998384680960") return;
                     randomUser.send("You won a drop!\nHere is your steam key: " + key + "!") // DM the user the key
                     message.channel.send("<@" + randomUser.id + "> won a drop!\nI sent them a steam key!") // announce someone won the key
                     cooldown = true; // enable the cooldown
@@ -106,16 +104,6 @@ bot.on("message", async message => {
                     }, ms);
                 }
             }
-    }
-
-    if(!nachosSet.has(message.author.id)) {
-        nachosSet.add(message.author.id)
-        if(db.get(message.author.id)) {db.set(message.author.id, Number(db.get(message.author.id)) + 5)} else {
-            db.set(message.author.id, 10) // give 10 nachos if they talk for the first time
-        } // give 5 nachos for talking
-        setTimeout(() => {
-            nachosSet.delete(message.author.id)
-        }, botConfig.nachoCooldown * 1000 * 60)
     }
 
  });

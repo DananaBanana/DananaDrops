@@ -5,13 +5,13 @@ var path = require('path');
 
 module.exports.run = async (bot, message, arguments) => {
 
-    let botConfigPath = path.join(__dirnamen, "..", "botconfig.json")
+    let botConfigPath = path.join(__dirname, "..", "botconfig.json")
 
     var botConfig =  JSON.parse(fs.readFileSync(botConfigPath).toString());
 
     if(message.author.id !== "423478609529929728" && message.author.id !== "222694725487034369") return message.reply("You are not permitted to use this command.")
 
-    if(!arguments[0]) return message.reply('Please insert an argument so I know what config you are trying to change.\nValid arguments: `minimumSpeakers || minCooldown || maxCooldown || dropPercentage || prefix || nachoCooldown`')
+    if(!arguments[0]) return message.reply('Please insert an argument so I know what config you are trying to change.\nValid arguments: `minimumSpeakers || minCooldown || maxCooldown || dropChange || prefix || nachoCooldown`')
     if(!arguments[1]) return message.reply('Please enter a value for the config you want to change.')
     
     if(arguments[0].toLowerCase() == "minimumspeakers") {
@@ -35,7 +35,7 @@ module.exports.run = async (bot, message, arguments) => {
         fs.writeFileSync(botConfigPath, JSON.stringify(botConfig));
         return message.channel.send("Succesfully set " + arguments[0].toLowerCase() + " to " + number + "!")
     }
-    if(arguments[0].toLowerCase() == "droppercentage") {
+    if(arguments[0].toLowerCase() == "dropchance") {
         var number = Number(arguments[1])
         if(isNaN(number)) return message.reply("This isn't a number.")
         botConfig.dropPercentage = number;
