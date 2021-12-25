@@ -1,14 +1,18 @@
 const discord = require("discord.js");
 const { MessageButton }= require('discord-buttons');
 const path = require("path")
-const fs = require("fs")
+const fs = require("fs");
+const { updateTokens } = require("../lib");
 
 module.exports.run = async (bot, message, arguments, db) => {
 
-    let mainDir = path.join(__dirname, '..')
-    let result = await require(mainDir + "/lib.js").inflation(db, 10)
-    let keyCost = result.keyCost
-    let totalCirculation = result.totalCirculation
+    /**
+     * @param {discord.Client} bot
+     * @param {discord.Message} message
+     */
+
+    let tokenJson = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "tokens.json")).toString());
+    let currTokens = tokenJson[message.author.id];
 
     let yesButton = new MessageButton()
         .setStyle('green') //default: blurple
@@ -20,7 +24,7 @@ module.exports.run = async (bot, message, arguments, db) => {
         .setLabel("Cancel")
         .setID('cancel_redeem')
 
-    message.channel.send("There are currently " + totalCirculation + " nachos, you need 10% of the circulating supply to buy a steam key, so a key would cost you " + keyCost + " nachos!\nAre you sure you want to continue?", {buttons: [yesButton, cancelButton]})
+    message.channel.send(`Hello ${message.author.username}.\nYou currently have ${currTokens} tokens.\nRedeeming a key would remove 1 token and give you 1 steam key.\nAre you sure you want to continue?`, {buttons: [yesButton, cancelButton]})
 
     let disabled = false;
 
@@ -29,24 +33,57 @@ module.exports.run = async (bot, message, arguments, db) => {
         if(button.id === 'continue_redeem') {
             disabled = true;
             if(button.clicker.user.id !== message.author.id) return;
-            if(keyCost > db.get(message.author.id)) return button.reply.send("You do not have enough nachos.")
-                var jsonFile =  JSON.parse(fs.readFileSync(path.join(__dirname, "..", "keys.json")).toString());
-                    var keyArray = jsonFile.keyArray
-                    if (keyArray.length === 0) return button.reply.send("There were no keys left, you still have the same amount of nachos.") // When there are no keys left, notify me and 3oF
-                    var key = keyArray[0];
-                    keyArray.shift(); // delete the used key
-                    jsonFile.keyArray = keyArray // update the file so the key is deleted
-            await db.set(message.author.id, db.get(message.author.id) - keyCost)
+
+
+            if(!currTokens) currTokens = 0;   
+            if(currTokens == 0) return button.reply.send("You do not have enough tokens.\nYou need at least 1 token.")
+            var jsonFile =  JSON.parse(fs.readFileSync(path.join(__dirname, "..", "keys.json")).toString());
+            var keyArray = jsonFile.keyArray
+            if (keyArray.length === 0) return button.reply.send("There were no keys left, you still have the same amount of tokens.") // When there are no keys left, notify me and 3oF
+            var key = keyArray[0];
+            keyArray.shift(); // delete the used key
+            currTokens--;
+            jsonFile.keyArray = keyArray // update the file so the key is deleted
+            tokenJson[button.clicker.user.id] = currTokens;
+            updateTokens(message.member, currTokens)
+
             button.reply.send(message.author.tag + " clicked yes, and I sent them the steam key via a DM!")
-            try {message.author.send(`Here is your key!` + `\n\`${key}\``, true);}
-            catch {
-            button.reply.edit("Hmm I couldn't send them a message, I added the key back to the database and added their money back!"); 
-            await db.set(message.author.id, db.get(message.author.id) + keyCost)
-            keyArray.push(key)
-            jsonFile.keyArray = keyArray;
+            try {
+                let keyObj = new Object()
+                if(typeof key == 'string') {
+                    keyObj.key = key
+                    keyObj.author = "3oF#6969"
+                } else {
+                    keyObj = key;
+                }
+                const embed = new discord.MessageEmbed()
+                    .setColor('#fcc603')
+                    .setTitle('You Redeemed a key!')
+                    .setDescription(`This key can be redeemed on steam.`)
+                    .addField("Key:", `||${keyObj.key}||`)
+                    .addField("Added by:", `${keyObj.author}`)
+                    .setFooter(`You currently have ${currTokens} tokens.`)
+                    .setTimestamp()
+                    .setAuthor(bot.user.username, bot.user.avatarURL())
+                
+                message.author.send(embed);
+                bot.channels.cache.get("924361720951099443").send(`${message.author.username}#${message.author.discriminator} redeemed a key`)
+            }
+            catch (e) {
+                button.reply.edit("Hmm I couldn't send you a message, I added the key back to the database and added your tokens back!"); 
+                keyArray.push(key)
+                currTokens++
+                tokenJson[button.clicker.user.id] = currTokens;
+                jsonFile.keyArray = keyArray;
+                updateTokens(message.member, currTokens)
         }
-        fs.writeFileSync(path.join(__dirname, "..", "keys.json"), JSON.stringify(jsonFile));
-        }
+            let redemptions = jsonFile['redemptions']
+            redemptions++
+            jsonFile['redemptions'] = redemptions;
+            console.log(redemptions)
+            bot.channels.cache.get("924386339313557595").edit({ name: `🪙 Redemptions: ${redemptions}`}).catch(console.error)};
+            fs.writeFileSync(path.join(__dirname, "..", "tokens.json"), JSON.stringify(tokenJson))
+            fs.writeFileSync(path.join(__dirname, "..", "keys.json"), JSON.stringify(jsonFile));
         if(button.id === 'cancel_redeem') {
             if(button.clicker.user.id !== message.author.id) return;
             button.reply.send(`Succesfully canceled your request.`);
@@ -58,5 +95,5 @@ module.exports.run = async (bot, message, arguments, db) => {
 
 module.exports.help = {
     name: "redeemkey",
-    description: "Convert nachos to steam keys."
+    description: "Convert tokens to steam keys."
 }

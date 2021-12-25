@@ -17,7 +17,11 @@ module.exports.run = async (bot, message, arguments) => {
     var keyArray = keyJson.keyArray
     if(!key) return message.reply("There is no key for me to add.")
 
-    keyArray = keyArray.push(key);
+    let keyObj = new Object({
+        author: `${message.author.username}#${message.author.discriminator}`,
+        key: key
+    })
+    keyArray = keyArray.push(keyObj);
 
     fs.writeFileSync(keysPath, JSON.stringify(keyJson));
 

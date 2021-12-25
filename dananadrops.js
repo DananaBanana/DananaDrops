@@ -81,20 +81,37 @@ bot.on("message", async message => {
             talkedSet.add(message.author.id)  // make the bot know they talked
             if(messageCounter == Number(botConfig.minimumSpeakers) && cooldown == false) { // checks if enough people are talking and the cooldown is off
                 randomNumb = Math.random() * botConfig.dropChance;
-                if(randomNumb < Number(botConfig.dropChance)) { // 
-                    var jsonFile =  JSON.parse(fs.readFileSync(__dirname + "/keys.json").toString());
-                    var keyArray = jsonFile.keyArray
-                    if (keyArray.length === 0) return bot.channels.cache.get("820726443607588905").send("Array empty, please restock keys!"); // When there are no keys left, notify me and 3oF
-                    var key = keyArray[0];
-                    keyArray.shift(); // delete the used key
-                    jsonFile.keyArray = keyArray // update the file so the key is deleted
-                    fs.writeFileSync(__dirname + "/keys.json", JSON.stringify(jsonFile));
+                if(randomNumb < Number(botConfig.dropChance)) {
+
                     let items = Array.from(talkedSet);
                     var randomUser = items[Math.floor(Math.random() * items.length)]; 
-                    randomUser = message.guild.members.cache.get(randomUser) // select a random user
-                    if(randomUser.id == "222694725487034369" || randomUser.id == "423478609529929728" || randomUser.id == "319116998384680960") return;
-                    randomUser.send("You won a drop!\nHere is your steam key: " + key + "!") // DM the user the key
-                    message.channel.send("<@" + randomUser.id + "> won a drop!\nI sent them a steam key!") // announce someone won the key
+                    let target = message.guild.members.cache.get(randomUser) // select a random user
+
+                    if(target.id == "222694725487034369" || target.id == "423478609529929728" || target.id == "319116998384680960") return;
+
+                    let targetMember = target.member
+                    let tokenJson = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "tokens.json")).toString());
+                    let currTokens = tokenJson[target.id];
+                    if(!currTokens) currTokens = 0;
+                    currTokens++;
+                    tokenJson[target.id] = currTokens;
+                    fs.writeFileSync(path.join(__dirname, "..", "tokens.json"), JSON.stringify(tokenJson))
+
+                    const embed = new discord.MessageEmbed()
+                        .setColor('#356734')
+                        .setTitle('You have received a token.')
+                        .setDescription('This token allows you to get a steam key.\nYou can redeem said steam key by going to <#924321539330043964> and typing `d!redeemkey`\nYou can also give the token to someone else by going to <#809326928037281813> typing `d!givetoken @user <amount>`')
+                        .setFooter(`You currently have ${currTokens} tokens.`)
+                        .setTimestamp()
+                        .setAuthor(bot.user.username, bot.user.avatarURL())
+                        
+                    target.send(embed);
+
+                    let mainDir = path.join(__dirname, '..')
+                    await require(mainDir + "/lib.js").updateTokens(targetMember, currTokens)
+
+                
+                    message.channel.send("<@" + randomUser.id + "> won a drop!\nI gave them a token!") // announce someone won the key
                     cooldown = true; // enable the cooldown
                     messageCounter = 0; // reset the count for how much people talked
                     talkedSet.clear(); // reset the cache of the saved users
