@@ -6,7 +6,7 @@ module.exports.run = async (bot, message, arguments) => {
 
     let keysPath = path.join(__dirname, '..', 'keys.json')
     var keyJson = JSON.parse(fs.readFileSync(keysPath).toString());
-    if(message.author.id !== "423478609529929728" && message.author.id !== "222694725487034369") return message.reply("You are not permitted to use this command.")
+    if(message.author.id !== "423478609529929728" && message.author.id !== "222694725487034369" && message.author.id !== "470064639007522837") return message.reply("You are not permitted to use this command.")
 
     if(!arguments) return message.reply(`Please give me a code to put into the system`)
     if(arguments[1]) return message.reply(`Please only give me one code at a time.`)
@@ -31,5 +31,5 @@ module.exports.run = async (bot, message, arguments) => {
 module.exports.help = {
     name: "addkey",
     description: "Add Keys to the database!",
-    aliasses: ["ak"]
+    aliasses: []
 }

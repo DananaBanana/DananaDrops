@@ -10,7 +10,7 @@ var path = require('path');
 
 module.exports.run = async (bot, message, arguments) => {
 
-    if(message.author.id !== "423478609529929728" && message.author.id !== "222694725487034369") return message.lineReply("no")
+    if(message.author.id !== "423478609529929728" && message.author.id !== "222694725487034369" && message.author.id !== "470064639007522837") return message.lineReply("no")
     if(!message.mentions.members) return message.lineReply("We need more info, valid arguments: `@user`")
     
     for (var targetMember of message.mentions.members) {
